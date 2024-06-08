@@ -94,7 +94,7 @@ async function runForAuthorization(authorization) {
 
 
 async function main() {
-    while (true) {P;
+    while (true) {
         for (const authorization of authorizationList) {
             await clickBoostEnergy(authorization);
             await runForAuthorization(authorization);
