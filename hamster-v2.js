@@ -46,6 +46,39 @@ async function clickWithAPI(authorization) {
     return null;
 }
 
+async function clickBoostEnergy(authorization) {
+    try {
+        const payload = {
+            boostId: "BoostFullAvailableTaps",
+            timestamp: Date.now()
+        };
+
+        const response = await axiosInstance.post('/clicker/buy-boost', payload, {
+            headers: {
+                'Authorization': `Bearer ${authorization}`
+            }
+        });
+
+        if (response.status === 200) {
+            const data = response.data;
+            const clickerUser = data.clickerUser;
+            const requiredFields = {
+                Balance: clickerUser.balanceCoins,
+                Level: clickerUser.level,
+                availableTaps: clickerUser.availableTaps,
+                maxTaps: clickerUser.maxTaps
+            };
+            console.log('Đang tap:', requiredFields);
+            return requiredFields;
+        } else {
+            console.error('Không bấm được. Status code:', response.status);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+    return null;
+}
+
 async function runForAuthorization(authorization) {
     while (true) {
         const requests = Array.from({ length: 5 }, () => clickWithAPI(authorization));
@@ -61,12 +94,13 @@ async function runForAuthorization(authorization) {
 
 
 async function main() {
-    while (true) {
+    while (true) {P;
         for (const authorization of authorizationList) {
+            await clickBoostEnergy(authorization);
             await runForAuthorization(authorization);
         }
         console.log('Đã chạy xong tất cả các token, nghỉ 5 phút rồi chạy lại từ đầu...');
-        await new Promise(resolve => setTimeout(resolve, 300000));
+        await new Promise(resolve => setTimeout(resolve, 150000));
     }
 }
 
